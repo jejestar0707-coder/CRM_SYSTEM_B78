@@ -1,0 +1,2646 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Follow Up System - Enterprise</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        /* Login Page Styles */
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 400px;
+            padding: 40px;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h2 {
+            color: #2D3748;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .login-header p {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .role-badge.purple {
+            background: #9F7AEA;
+            color: #553C9A;
+        }
+
+        .role-badge.blue {
+            background: #63B3ED;
+            color: #2C5282;
+        }
+
+        .login-form .form-group {
+            margin-bottom: 20px;
+        }
+
+        .login-form label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4A5568;
+            font-weight: 500;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #E2E8F0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .login-form input:focus {
+            outline: none;
+            border-color: #6B46C1;
+            box-shadow: 0 0 0 3px rgba(107, 70, 193, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .login-btn.purple {
+            background: #6B46C1;
+            color: white;
+        }
+
+        .login-btn.purple:hover {
+            background: #553C9A;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(107, 70, 193, 0.3);
+        }
+
+        .login-btn.blue {
+            background: #3182CE;
+            color: white;
+        }
+
+        .login-btn.blue:hover {
+            background: #2C5282;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(49, 130, 206, 0.3);
+        }
+
+        .role-switch {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .role-switch button {
+            background: none;
+            border: none;
+            color: #718096;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: underline;
+            margin: 0 10px;
+        }
+
+        .role-switch button:hover {
+            color: #2D3748;
+        }
+
+        /* Main App Styles */
+        .app-container {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+            background: #F7FAFC;
+        }
+
+        .app-container.active {
+            display: flex;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.purple {
+            background: linear-gradient(180deg, #6B46C1 0%, #553C9A 100%);
+            color: white;
+        }
+
+        .sidebar.blue {
+            background: linear-gradient(180deg, #3182CE 0%, #2C5282 100%);
+            color: white;
+        }
+
+        .sidebar-header {
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-header h3 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu a {
+            display: block;
+            padding: 12px 15px;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-menu i {
+            margin-right: 10px;
+            width: 20px;
+        }
+
+        .logout-btn {
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .content-header {
+            margin-bottom: 30px;
+        }
+
+        .content-header h2 {
+            color: #2D3748;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .content-header p {
+            color: #718096;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h4 {
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2D3748;
+        }
+
+        .filter-section {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .filter-section input,
+        .filter-section select {
+            padding: 10px 15px;
+            border: 2px solid #E2E8F0;
+            border-radius: 8px;
+            font-size: 14px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-section button {
+            padding: 10px 25px;
+            background: #6B46C1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .filter-section button:hover {
+            background: #553C9A;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #EDF2F7;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #4A5568;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #E2E8F0;
+            color: #2D3748;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: #F7FAFC;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.success {
+            background: #C6F6D5;
+            color: #22543D;
+        }
+
+        .status-badge.warning {
+            background: #FEEBC8;
+            color: #744210;
+        }
+
+        .status-badge.error {
+            background: #FED7D7;
+            color: #C53030;
+        }
+
+        .status-badge.info {
+            background: #BEE3F8;
+            color: #2C5282;
+        }
+
+        .checkbox-follow {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            margin: 0 5px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .action-btn.edit {
+            background: #63B3ED;
+            color: #2C5282;
+        }
+
+        .action-btn.edit:hover {
+            background: #4299E1;
+            color: white;
+        }
+
+        .action-btn.delete {
+            background: #FED7D7;
+            color: #C53030;
+        }
+
+        .action-btn.delete:hover {
+            background: #FC8181;
+            color: white;
+        }
+
+        .action-btn.add {
+            background: #48BB78;
+            color: white;
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+
+        .action-btn.add:hover {
+            background: #38A169;
+        }
+
+        /* Request Form Styles */
+        .request-form-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            padding: 35px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .request-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .request-header h3 {
+            color: #2D3748;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .request-header p {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .request-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            color: #4A5568;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .form-group label i {
+            color: #3182CE;
+            font-style: normal;
+            font-size: 16px;
+        }
+
+        .form-group label .required {
+            color: #E53E3E;
+            font-size: 12px;
+            margin-left: 4px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            color: #A0AEC0;
+            font-size: 16px;
+        }
+
+        .input-wrapper input,
+        .input-wrapper textarea,
+        .input-wrapper select {
+            width: 100%;
+            padding: 12px 15px;
+            padding-left: 40px;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .input-wrapper input:focus,
+        .input-wrapper textarea:focus,
+        .input-wrapper select:focus {
+            outline: none;
+            border-color: #3182CE;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+        }
+
+        .input-wrapper textarea {
+            min-height: 100px;
+            resize: vertical;
+            padding-top: 12px;
+        }
+
+        .input-hint {
+            font-size: 12px;
+            color: #A0AEC0;
+            margin-top: 4px;
+        }
+
+        .request-info {
+            background: #EBF8FF;
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .request-info-icon {
+            background: #3182CE;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .request-info-text {
+            color: #2C5282;
+            font-size: 13px;
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .request-info-text strong {
+            color: #1E4A6B;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #3182CE 0%, #2C5282 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(49, 130, 206, 0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: #2D3748;
+        }
+
+        .modal-content .form-group {
+            margin-bottom: 15px;
+        }
+
+        .modal-content label {
+            display: block;
+            margin-bottom: 5px;
+            color: #4A5568;
+            font-weight: 500;
+        }
+
+        .modal-content input,
+        .modal-content select,
+        .modal-content textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #E2E8F0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .modal-actions .save-btn {
+            background: #48BB78;
+            color: white;
+        }
+
+        .modal-actions .save-btn:hover {
+            background: #38A169;
+        }
+
+        .modal-actions .cancel-btn {
+            background: #E2E8F0;
+            color: #4A5568;
+        }
+
+        .modal-actions .cancel-btn:hover {
+            background: #CBD5E0;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            display: none;
+            animation: slideIn 0.3s ease;
+            z-index: 2000;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification.success {
+            border-left: 4px solid #48BB78;
+        }
+
+        .notification.error {
+            border-left: 4px solid #F56565;
+        }
+
+        .notification.info {
+            border-left: 4px solid #3182CE;
+        }
+
+        .notification.show {
+            display: block;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 50px;
+        }
+
+        .loading-spinner .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #E2E8F0;
+            border-top-color: #6B46C1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: #A0AEC0;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .welcome-message {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .welcome-message h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .welcome-message p {
+            opacity: 0.9;
+        }
+
+        .profile-info {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .profile-avatar {
+            width: 60px;
+            height: 60px;
+            background: #6B46C1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .profile-details h4 {
+            color: #2D3748;
+            margin-bottom: 5px;
+        }
+
+        .profile-details p {
+            color: #718096;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div class="login-container" id="loginPage">
+        <div class="login-header">
+            <h2>CRM Follow Up System</h2>
+            <p>Enterprise Customer Relationship Management</p>
+            <div class="role-badge purple" id="roleBadge">Master Admin</div>
+        </div>
+        
+        <div class="login-form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="Masukkan username" autocomplete="off">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Masukkan password" autocomplete="off">
+            </div>
+            
+            <button class="login-btn purple" id="loginBtn" onclick="handleLogin()">
+                <span id="loginText">Login</span>
+                <span id="loginLoading" class="loading" style="display: none;"></span>
+            </button>
+            
+            <div class="role-switch">
+                <button onclick="switchRole('master')">Master Admin</button>
+                <button onclick="switchRole('crm')">Customer Care</button>
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px; padding: 15px; background: #F7FAFC; border-radius: 10px; font-size: 12px; text-align: center;">
+            <p style="color: #4A5568;"><strong>🔐 Setup Supabase Required:</strong></p>
+            <p style="color: #718096;">Hubungi admin untuk mendapatkan akun</p>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div class="app-container" id="appContainer">
+        <!-- Content will be dynamically added here -->
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <span id="notificationMessage"></span>
+    </div>
+
+    <!-- Include Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        // =============================================
+        // KONFIGURASI SUPABASE - WAJIB DIISI!
+        // =============================================
+        const SUPABASE_URL = 'https://qbbcocqofylpbkadlezo.supabase.co'; // GANTI DENGAN URL SUPABASE ANDA
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiYmNvY3FvZnlscGJrYWRsZXpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NTYwMTYsImV4cCI6MjA4NzQzMjAxNn0.4Wk9FKHFWFO7IjvJSWGXnmtZbsxf5C_xOaw0FbThB7w'; // GANTI DENGAN ANON KEY SUPABASE ANDA
+
+        // Inisialisasi Supabase
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // =============================================
+        // CEK KONEKSI SUPABASE
+        // =============================================
+        async function checkSupabaseConnection() {
+            try {
+                const { error } = await supabase.from('users').select('count', { count: 'exact', head: true });
+                if (error) {
+                    console.error('Supabase connection error:', error);
+                    showNotification('Gagal terhubung ke database. Periksa konfigurasi Supabase!', 'error');
+                    return false;
+                }
+                return true;
+            } catch (error) {
+                console.error('Supabase connection error:', error);
+                showNotification('Gagal terhubung ke database. Periksa konfigurasi Supabase!', 'error');
+                return false;
+            }
+        }
+
+        // =============================================
+        // STATE MANAGEMENT
+        // =============================================
+        let currentUser = null;
+        let currentRole = 'master';
+        let supabaseConnected = false;
+
+        // =============================================
+        // FUNGSI LOGIN
+        // =============================================
+        async function handleLogin() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const loginBtn = document.getElementById('loginBtn');
+            const loginText = document.getElementById('loginText');
+            const loginLoading = document.getElementById('loginLoading');
+
+            if (!username || !password) {
+                showNotification('Username dan password harus diisi!', 'error');
+                return;
+            }
+
+            // Tampilkan loading
+            loginText.style.display = 'none';
+            loginLoading.style.display = 'inline-block';
+            loginBtn.disabled = true;
+
+            try {
+                // Cek koneksi Supabase
+                const connected = await checkSupabaseConnection();
+                if (!connected) {
+                    resetLoginButton();
+                    return;
+                }
+
+                // Cari user di database
+                const { data: users, error } = await supabase
+                    .from('users')
+                    .select(`
+                        *,
+                        customer_cares!user_id (*)
+                    `)
+                    .eq('username', username)
+                    .eq('password', password)
+                    .eq('role', currentRole);
+
+                if (error) throw error;
+
+                if (users && users.length > 0) {
+                    currentUser = users[0];
+                    
+                    // Untuk role CRM, pastikan punya data customer_care
+                    if (currentRole === 'crm') {
+                        if (!currentUser.customer_cares || currentUser.customer_cares.length === 0) {
+                            showNotification('Akun ini tidak terdaftar sebagai Customer Care!', 'error');
+                            resetLoginButton();
+                            return;
+                        }
+                        currentUser.customer_care = currentUser.customer_cares[0];
+                    }
+
+                    showNotification(`Selamat datang, ${currentUser.name || username}!`, 'success');
+                    
+                    // Sembunyikan login, tampilkan app
+                    document.getElementById('loginPage').style.display = 'none';
+                    document.getElementById('appContainer').classList.add('active');
+                    
+                    // Load aplikasi utama
+                    loadMainApp();
+                } else {
+                    showNotification('Username atau password salah!', 'error');
+                    resetLoginButton();
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showNotification('Gagal login: ' + error.message, 'error');
+                resetLoginButton();
+            }
+        }
+
+        function resetLoginButton() {
+            const loginText = document.getElementById('loginText');
+            const loginLoading = document.getElementById('loginLoading');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            loginText.style.display = 'inline';
+            loginLoading.style.display = 'none';
+            loginBtn.disabled = false;
+        }
+
+        function switchRole(role) {
+            currentRole = role;
+            const roleBadge = document.getElementById('roleBadge');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            if (role === 'master') {
+                roleBadge.textContent = 'Master Admin';
+                roleBadge.className = 'role-badge purple';
+                loginBtn.className = 'login-btn purple';
+            } else {
+                roleBadge.textContent = 'Customer Care';
+                roleBadge.className = 'role-badge blue';
+                loginBtn.className = 'login-btn blue';
+            }
+            
+            // Kosongkan form login
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        // =============================================
+        // LOAD MAIN APPLICATION
+        // =============================================
+        function loadMainApp() {
+            const appContainer = document.getElementById('appContainer');
+            
+            // Create sidebar based on role
+            const sidebar = document.createElement('div');
+            sidebar.className = `sidebar ${currentRole === 'master' ? 'purple' : 'blue'}`;
+            
+            if (currentRole === 'master') {
+                sidebar.innerHTML = `
+                    <div class="sidebar-header">
+                        <h3>Master Admin</h3>
+                        <p>${currentUser.name || 'Admin'}</p>
+                    </div>
+                    <ul class="sidebar-menu">
+                        <li><a href="#" class="active" onclick="showDashboard('master'); setActive(this)"><i>📊</i> Dashboard</a></li>
+                        <li><a href="#" onclick="showMembers(); setActive(this)"><i>👥</i> Data Member</a></li>
+                        <li><a href="#" onclick="showCustomerCares(); setActive(this)"><i>👤</i> Kelola Customer Care</a></li>
+                        <li><a href="#" onclick="showNotifications(); setActive(this)"><i>🔔</i> Notifikasi <span id="notificationBadge" style="background: red; color: white; padding: 2px 8px; border-radius: 10px; margin-left: 10px; display: none;">0</span></a></li>
+                        <li><a href="#" onclick="showReports(); setActive(this)"><i>📈</i> Laporan</a></li>
+                    </ul>
+                    <button class="logout-btn" onclick="logout()"><i>🚪</i> Logout</button>
+                `;
+            } else {
+                sidebar.innerHTML = `
+                    <div class="sidebar-header">
+                        <h3>Customer Care</h3>
+                        <p>${currentUser.name || 'CRM'}</p>
+                    </div>
+                    <ul class="sidebar-menu">
+                        <li><a href="#" class="active" onclick="showDashboard('crm'); setActive(this)"><i>📊</i> Dashboard</a></li>
+                        <li><a href="#" onclick="showFollowUpList(); setActive(this)"><i>✅</i> Follow Up Hari Ini</a></li>
+                        <li><a href="#" onclick="showFollowedUp(); setActive(this)"><i>✔️</i> Sudah Di Follow Up</a></li>
+                        <li><a href="#" onclick="showAddMemberRequest(); setActive(this)"><i>➕</i> Request Member Baru</a></li>
+                        <li><a href="#" onclick="showNotes(); setActive(this)"><i>📝</i> Catatan Follow Up</a></li>
+                    </ul>
+                    <button class="logout-btn" onclick="logout()"><i>🚪</i> Logout</button>
+                `;
+            }
+            
+            appContainer.innerHTML = '';
+            appContainer.appendChild(sidebar);
+            
+            // Create main content
+            const mainContent = document.createElement('div');
+            mainContent.className = 'main-content';
+            mainContent.id = 'mainContent';
+            appContainer.appendChild(mainContent);
+            
+            // Load initial content
+            if (currentRole === 'master') {
+                showDashboard('master');
+                loadNotificationCount();
+                // Refresh notifikasi setiap 30 detik
+                setInterval(loadNotificationCount, 30000);
+            } else {
+                showDashboard('crm');
+            }
+        }
+
+        function setActive(element) {
+            document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        // =============================================
+        // FUNGSI UNTUK MASTER ADMIN
+        // =============================================
+
+        async function showDashboard(role) {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Memuat data...</p>
+                </div>
+            `;
+            
+            try {
+                if (role === 'master') {
+                    // Ambil data dari Supabase
+                    const { data: members, error: membersError } = await supabase
+                        .from('members')
+                        .select('*');
+                    
+                    if (membersError) throw membersError;
+
+                    const { data: customerCares, error: crmError } = await supabase
+                        .from('customer_cares')
+                        .select('*, users!user_id(name)')
+                        .eq('active', true);
+                    
+                    if (crmError) throw crmError;
+
+                    const totalMembers = members?.length || 0;
+                    
+                    // Hitung follow up hari ini
+                    const today = new Date().toISOString().split('T')[0];
+                    const todayFollow = members?.filter(m => m.last_follow_up === today).length || 0;
+                    
+                    // Hitung member tidak aktif (>14 hari tanpa deposit)
+                    const twoWeeksAgo = new Date();
+                    twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+                    const twoWeeksAgoStr = twoWeeksAgo.toISOString().split('T')[0];
+                    
+                    const inactiveMembers = members?.filter(m => 
+                        m.last_deposit && m.last_deposit < twoWeeksAgoStr
+                    ).length || 0;
+
+                    mainContent.innerHTML = `
+                        <div class="welcome-message">
+                            <h3>Selamat Datang, ${currentUser.name}!</h3>
+                            <p>Berikut adalah ringkasan data CRM Anda hari ini.</p>
+                        </div>
+                        
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <h4>Total Customer Care Aktif</h4>
+                                <div class="number">${customerCares?.length || 0}</div>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Total Member</h4>
+                                <div class="number">${totalMembers}</div>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Follow Up Hari Ini</h4>
+                                <div class="number">${todayFollow}</div>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Member Tidak Aktif</h4>
+                                <div class="number">${inactiveMembers}</div>
+                            </div>
+                        </div>
+
+                        <div class="table-container">
+                            <h3 style="padding: 20px; margin: 0;">Aktivitas Customer Care Hari Ini</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Customer Care</th>
+                                        <th>Total Member</th>
+                                        <th>Follow Up Hari Ini</th>
+                                        <th>Progress</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${await renderCRMActivity(customerCares, members)}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                } else {
+                    await showCRMDashboard();
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                mainContent.innerHTML = '<div class="empty-state"><i>❌</i>Gagal memuat data. Periksa koneksi database.</div>';
+            }
+        }
+
+        async function renderCRMActivity(customerCares, members) {
+            if (!customerCares || customerCares.length === 0) {
+                return '<tr><td colspan="4" class="empty-state">Belum ada Customer Care aktif</td></tr>';
+            }
+
+            let html = '';
+            const today = new Date().toISOString().split('T')[0];
+
+            for (const crm of customerCares) {
+                const crmMembers = members?.filter(m => m.customer_care_id === crm.id) || [];
+                const crmTodayFollow = crmMembers.filter(m => m.last_follow_up === today).length;
+                const progress = crmMembers.length > 0 ? (crmTodayFollow / crmMembers.length * 100).toFixed(1) : 0;
+                
+                html += `
+                    <tr>
+                        <td>${crm.name}</td>
+                        <td>${crmMembers.length}</td>
+                        <td>${crmTodayFollow}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="background: #E2E8F0; height: 20px; border-radius: 10px; flex: 1; overflow: hidden;">
+                                    <div style="background: #48BB78; width: ${progress}%; height: 100%;"></div>
+                                </div>
+                                <small style="min-width: 45px;">${progress}%</small>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+            
+            return html;
+        }
+
+        async function showMembers() {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Memuat data member...</p>
+                </div>
+            `;
+            
+            try {
+                // Load all data dari Supabase
+                const { data: members, error: membersError } = await supabase
+                    .from('members')
+                    .select('*, customer_cares!customer_care_id(name)')
+                    .order('created_at', { ascending: false });
+                
+                if (membersError) throw membersError;
+
+                const { data: customerCares, error: crmError } = await supabase
+                    .from('customer_cares')
+                    .select('*')
+                    .eq('active', true);
+                
+                if (crmError) throw crmError;
+
+                mainContent.innerHTML = `
+                    <div class="content-header">
+                        <h2>Data Member</h2>
+                        <p>Kelola data member per Customer Care</p>
+                    </div>
+
+                    <div class="filter-section">
+                        <input type="text" id="searchInput" placeholder="Cari ID Member atau No. Telepon..." onkeyup="searchMembers()">
+                        <select id="crmFilter" onchange="filterByCRM()">
+                            <option value="">Semua Customer Care</option>
+                            ${customerCares?.map(crm => `<option value="${crm.id}">${crm.name}</option>`).join('') || ''}
+                        </select>
+                        <button class="action-btn add" onclick="openAddMemberModal()">+ Tambah Member</button>
+                    </div>
+
+                    <div id="membersContainer">
+                        ${await renderMembersByCRM(members, customerCares)}
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading members:', error);
+                mainContent.innerHTML = '<div class="empty-state"><i>❌</i>Gagal memuat data member. Periksa koneksi database.</div>';
+            }
+        }
+
+        async function renderMembersByCRM(members, customerCares) {
+            if (!customerCares || customerCares.length === 0) {
+                return '<div class="empty-state"><i>👥</i>Belum ada Customer Care aktif</div>';
+            }
+
+            let html = '';
+            const twoWeeksAgo = new Date();
+            twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+            const twoWeeksAgoStr = twoWeeksAgo.toISOString().split('T')[0];
+            
+            for (const crm of customerCares) {
+                const crmMembers = members?.filter(m => m.customer_care_id === crm.id) || [];
+                
+                html += `
+                    <div class="table-container" style="margin-bottom: 30px;">
+                        <h3 style="padding: 20px; margin: 0; background: #EDF2F7; display: flex; justify-content: space-between; align-items: center;">
+                            <span>${crm.name} (${crmMembers.length} Member)</span>
+                        </h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID Member</th>
+                                    <th>No. Telepon</th>
+                                    <th>Last Deposit</th>
+                                    <th>Last Follow Up</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${crmMembers.map(m => {
+                                    const isInactive = m.last_deposit && m.last_deposit < twoWeeksAgoStr;
+                                    
+                                    return `
+                                        <tr>
+                                            <td><strong>${m.member_id}</strong></td>
+                                            <td>${m.phone}</td>
+                                            <td>${m.last_deposit ? formatDate(m.last_deposit) : '-'}</td>
+                                            <td>${m.last_follow_up ? formatDate(m.last_follow_up) : '-'}</td>
+                                            <td>
+                                                ${isInactive ? 
+                                                    '<span class="status-badge error">Tidak Aktif</span>' : 
+                                                    '<span class="status-badge success">Aktif</span>'
+                                                }
+                                            </td>
+                                            <td>
+                                                <button class="action-btn edit" onclick="openEditMemberModal(${m.id})">Edit</button>
+                                                ${isInactive ? 
+                                                    `<button class="action-btn delete" onclick="deleteMember(${m.id})">Hapus</button>` : 
+                                                    ''
+                                                }
+                                            </td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                                ${crmMembers.length === 0 ? '<tr><td colspan="6" class="empty-state">Belum ada member</td></tr>' : ''}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+            
+            return html;
+        }
+
+        async function showCustomerCares() {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Memuat data...</p>
+                </div>
+            `;
+            
+            try {
+                const { data: customerCares, error } = await supabase
+                    .from('customer_cares')
+                    .select(`
+                        *,
+                        users!user_id (id, username, name)
+                    `)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                // Hitung jumlah member per CRM
+                const { data: members } = await supabase
+                    .from('members')
+                    .select('customer_care_id');
+
+                const memberCounts = {};
+                members?.forEach(m => {
+                    memberCounts[m.customer_care_id] = (memberCounts[m.customer_care_id] || 0) + 1;
+                });
+
+                mainContent.innerHTML = `
+                    <div class="content-header">
+                        <h2>Kelola Customer Care</h2>
+                        <p>Tambah atau kelola akun Customer Care</p>
+                    </div>
+
+                    <button class="action-btn add" onclick="openAddCRMModal()" style="margin-bottom: 20px;">+ Tambah Customer Care</button>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nama</th>
+                                    <th>Username</th>
+                                    <th>Total Member</th>
+                                    <th>Status</th>
+                                    <th>Tanggal Daftar</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${customerCares?.map(crm => {
+                                    const memberCount = memberCounts[crm.id] || 0;
+                                    
+                                    return `
+                                        <tr>
+                                            <td><strong>${crm.name}</strong></td>
+                                            <td>${crm.users?.username || '-'}</td>
+                                            <td>${memberCount}</td>
+                                            <td>
+                                                <span class="status-badge ${crm.active ? 'success' : 'error'}">
+                                                    ${crm.active ? 'Aktif' : 'Nonaktif'}
+                                                </span>
+                                            </td>
+                                            <td>${crm.created_at ? formatDate(crm.created_at) : '-'}</td>
+                                            <td>
+                                                <button class="action-btn edit" onclick="toggleCRMStatus(${crm.id}, ${!crm.active})">
+                                                    ${crm.active ? 'Nonaktifkan' : 'Aktifkan'}
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                                ${!customerCares || customerCares.length === 0 ? '<tr><td colspan="6" class="empty-state">Belum ada Customer Care</td></tr>' : ''}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading customer cares:', error);
+                mainContent.innerHTML = '<div class="empty-state"><i>❌</i>Gagal memuat data. Periksa koneksi database.</div>';
+            }
+        }
+
+        async function showNotifications() {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Memuat notifikasi...</p>
+                </div>
+            `;
+            
+            try {
+                const { data: notifications, error } = await supabase
+                    .from('notifications')
+                    .select(`
+                        *,
+                        users!from_user_id (name)
+                    `)
+                    .eq('to_user_id', currentUser.id)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                mainContent.innerHTML = `
+                    <div class="content-header">
+                        <h2>Notifikasi</h2>
+                        <p>Pemberitahuan dan request dari Customer Care</p>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Waktu</th>
+                                    <th>Dari</th>
+                                    <th>Pesan</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${notifications?.map(notif => {
+                                    const isNew = !notif.read;
+                                    
+                                    return `
+                                        <tr>
+                                            <td>${formatDateTime(notif.created_at)}</td>
+                                            <td>${notif.users?.name || '-'}</td>
+                                            <td>${notif.message}</td>
+                                            <td>
+                                                <span class="status-badge ${isNew ? 'warning' : 'success'}">
+                                                    ${isNew ? 'Baru' : 'Dibaca'}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                ${notif.type === 'member_request' && isNew ? 
+                                                    `<button class="action-btn edit" onclick="processMemberRequest(${notif.id})">Proses</button>` : 
+                                                    ''
+                                                }
+                                                ${isNew ? 
+                                                    `<button class="action-btn delete" onclick="markNotificationRead(${notif.id})">Tandai Dibaca</button>` : 
+                                                    ''
+                                                }
+                                            </td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                                ${!notifications || notifications.length === 0 ? '<tr><td colspan="5" class="empty-state">Belum ada notifikasi</td></tr>' : ''}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+
+                // Tandai semua sebagai sudah dibaca
+                await supabase
+                    .from('notifications')
+                    .update({ read: true })
+                    .eq('to_user_id', currentUser.id)
+                    .eq('read', false);
+                
+                loadNotificationCount();
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+                mainContent.innerHTML = '<div class="empty-state"><i>❌</i>Gagal memuat notifikasi. Periksa koneksi database.</div>';
+            }
+        }
+
+        async function loadNotificationCount() {
+            try {
+                const { count, error } = await supabase
+                    .from('notifications')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('to_user_id', currentUser.id)
+                    .eq('read', false);
+
+                if (error) throw error;
+
+                const badge = document.getElementById('notificationBadge');
+                if (badge) {
+                    if (count > 0) {
+                        badge.textContent = count;
+                        badge.style.display = 'inline';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading notification count:', error);
+            }
+        }
+
+        async function showReports() {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Memuat laporan...</p>
+                </div>
+            `;
+            
+            try {
+                const { data: followUps, error: followError } = await supabase
+                    .from('follow_ups')
+                    .select(`
+                        *,
+                        members!member_id (member_id, phone),
+                        customer_cares!customer_care_id (name)
+                    `)
+                    .order('created_at', { ascending: false })
+                    .limit(100);
+
+                if (followError) throw followError;
+
+                const { data: members, error: membersError } = await supabase
+                    .from('members')
+                    .select('*');
+
+                if (membersError) throw membersError;
+
+                mainContent.innerHTML = `
+                    <div class="content-header">
+                        <h2>Laporan Follow Up</h2>
+                        <p>Riwayat aktivitas follow up Customer Care</p>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h4>Total Follow Up</h4>
+                            <div class="number">${followUps?.length || 0}</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Rata-rata per Hari</h4>
+                            <div class="number">${((followUps?.length || 0) / 30).toFixed(1)}</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Member Aktif</h4>
+                            <div class="number">${members?.filter(m => m.status === 'active').length || 0}</div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <h3 style="padding: 20px; margin: 0;">Riwayat Follow Up Terbaru</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Customer Care</th>
+                                    <th>Member</th>
+                                    <th>Catatan</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${followUps?.map(f => `
+                                    <tr>
+                                        <td>${formatDateTime(f.created_at)}</td>
+                                        <td>${f.customer_cares?.name || '-'}</td>
+                                        <td>${f.members?.member_id || '-'} (${f.members?.phone || '-'})</td>
+                                        <td>${f.notes || '-'}</td>
+                                        <td>
+                                            <span class="status-badge ${f.status === 'success' ? 'success' : 'warning'}">
+                                                ${f.status === 'success' ? 'Berhasil' : 'Pending'}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                                ${!followUps || followUps.length === 0 ? '<tr><td colspan="5" class="empty-state">Belum ada data follow up</td></tr>' : ''}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading reports:', error);
+                mainContent.innerHTML = '<div class="empty-state"><i>❌</i>Gagal memuat laporan. Periksa koneksi database.</div>';
+            }
+        }
+
+        // =============================================
+        // FUNGSI UNTUK CUSTOMER CARE
+        // =============================================
+
+        async function showCRMDashboard() {
+            const mainContent = document.getElementById('mainContent');
+            
+            try {
+                const { data: members, error } = await supabase
+                    .from('members')
+                    .select('*')
+                    .eq('customer_care_id', currentUser.customer_care.id);
+
+                if (error) throw error;
+
+                const totalMembers = members?.length || 0;
+                const today = new Date().toISOString().split('T')[0];
+                const todayFollow = members?.filter(m => m.last_follow_up === today).length || 0;
+                const pendingFollow = totalMembers - todayFollow;
+
+                mainContent.innerHTML = `
+                    <div class="welcome-message">
+                        <h3>Selamat Datang, ${currentUser.name}!</h3>
+                        <p>Ringkasan follow up Anda hari ini.</p>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h4>Total Member Pegangan</h4>
+                            <div class="number">${totalMembers}</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Sudah Follow Up Hari Ini</h4>
+                            <div class="number">${todayFollow}</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Belum Follow Up</h4>
+                            <div class="number">${pendingFollow}</div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <h3 style="padding: 20px; margin: 0;">Member Yang Perlu Di Follow Up</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID Member</th>
+                                    <th>No. Telepon</th>
+                                    <th>Last Deposit</th>
+                                    <th>Last Follow Up</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${members?.filter(m => m.last_follow_up !== today).map(m => `
+                                    <tr>
+                                        <td><strong>${m.member_id}</strong></td>
+                                        <td>${m.phone}</td>
+                                        <td>${m.last_deposit ? formatDate(m.last_deposit) : '-'}</td>
+                                        <td>${m.last_follow_up ? formatDate(m.last_follow_up) : '-'}</td>
+                                        <td><span class="status-badge warning">Perlu Follow Up</span></td>
+                                        <td>
+                                            <button class="action-btn edit" onclick="openFollowUpModal(${m.id})">Follow Up</button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                                ${!members || members.filter(m => m.last_follow_up !== today).length === 0 ? 
+                                    '<tr><td colspan="6" class="empty-state">Semua member sudah di follow up hari ini</td></tr>' : ''}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading CRM dashboard:', error);
+                mainContent.innerHTML = '<div class="empty-state"><i>❌</i>Gagal memuat dashboard. Periksa koneksi database.</div>';
+            }
+        }
+
+        async function showFollowUpList() {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Memuat data...</p>
+                </div>
+            `;
+            
+            try {
+                const { data: members, error } = await supabase
+                    .from('members')
+                    .select('*')
+                    .eq('customer_care_id', currentUser.customer_care.id);
+
+                if (error) throw error;
+
+                const today = new Date().toISOString().split('T')[0];
+                const pendingMembers = members?.filter(m => m.last_follow_up !== today) || [];
+
+                mainContent.innerHTML = `
+                    <div class="content-header">
+                        <h2>Follow Up Hari Ini</h2>
+                        <p>Member yang perlu Anda follow up hari ini</p>
+                    </div>
+
+                    <div class="filter-section">
+                        <input type="text" id="searchFollowUp" placeholder="Cari member..." onkeyup="searchFollowUpMembers()">
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID Member</th>
+                                    <th>No. Telepon</th>
+                                    <th>Last Deposit</th>
+                                    <th>Last Follow Up</th>
+                                    <th>Follow Up</th>
+                                    <th>Catatan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${pendingMembers.map(m => `
+                                    <tr>
+                                        <td><strong>${m.member_id}</strong></td>
+                                        <td>${m.phone}</td>
+                                        <td>${m.last_deposit ? formatDate(m.last_deposit) : '-'}</td>
+                                        <td>${m.last_follow_up ? formatDate(m.last_follow_up) : '-'}</td>
+                                        <td>
+                                            <input type="checkbox" class="checkbox-follow" onchange="markAsFollowed(${m.id}, this)">
+                                        </td>
+                                        <td>
+                                            <button class="action-btn edit" onclick="openFollowUpModal(${m.id})">Tambah Catatan</button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                                ${pendingMembers.length === 0 ? '<tr><td colspan="6" class="empty-state">Semua member sudah di follow up hari ini</td></tr>' : ''}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading follow up list:', error);
+                mainContent.innerHTML = '<div class="empty-state"><i>❌</i>Gagal memuat data. Periksa koneksi database.</div>';
+            }
+        }
+
+        async function showFollowedUp() {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Memuat data...</p>
+                </div>
+            `;
+            
+            try {
+                const { data: members, error } = await supabase
+                    .from('members')
+                    .select('*')
+                    .eq('customer_care_id', currentUser.customer_care.id);
+
+                if (error) throw error;
+
+                const today = new Date().toISOString().split('T')[0];
+                const followedMembers = members?.filter(m => m.last_follow_up === today) || [];
+
+                mainContent.innerHTML = `
+                    <div class="content-header">
+                        <h2>Sudah Di Follow Up</h2>
+                        <p>Member yang sudah Anda follow up hari ini</p>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID Member</th>
+                                    <th>No. Telepon</th>
+                                    <th>Last Deposit</th>
+                                    <th>Waktu Follow Up</th>
+                                    <th>Catatan Terakhir</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${followedMembers.map(m => `
+                                    <tr>
+                                        <td><strong>${m.member_id}</strong></td>
+                                        <td>${m.phone}</td>
+                                        <td>${m.last_deposit ? formatDate(m.last_deposit) : '-'}</td>
+                                        <td>${m.last_follow_up ? formatDate(m.last_follow_up) : '-'}</td>
+                                        <td>${m.notes || '-'}</td>
+                                    </tr>
+                                `).join('')}
+                                ${followedMembers.length === 0 ? '<tr><td colspan="5" class="empty-state">Belum ada member yang di follow up hari ini</td></tr>' : ''}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading followed up members:', error);
+                mainContent.innerHTML = '<div class="empty-state"><i>❌</i>Gagal memuat data. Periksa koneksi database.</div>';
+            }
+        }
+
+        function showAddMemberRequest() {
+            const mainContent = document.getElementById('mainContent');
+            
+            mainContent.innerHTML = `
+                <div class="content-header">
+                    <h2>Request Member Baru</h2>
+                    <p>Ajukan penambahan member baru ke Master Admin</p>
+                </div>
+
+                <div class="request-form-container">
+                    <div class="request-header">
+                        <h3>Formulir Permintaan Member Baru</h3>
+                        <p>Isi data member dengan lengkap dan benar</p>
+                    </div>
+
+                    <form class="request-form" onsubmit="submitMemberRequest(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>
+                                    <i>🆔</i> ID Member <span class="required">*</span>
+                                </label>
+                                <div class="input-wrapper">
+                                    <span class="input-icon">#</span>
+                                    <input type="text" id="newMemberId" placeholder="Contoh: MB001" required>
+                                </div>
+                                <div class="input-hint">Gunakan format: MB diikuti 3 angka (MB001, MB002, dst)</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <i>📱</i> Nomor WhatsApp <span class="required">*</span>
+                                </label>
+                                <div class="input-wrapper">
+                                    <span class="input-icon">📞</span>
+                                    <input type="tel" id="newMemberPhone" placeholder="08123456789" required>
+                                </div>
+                                <div class="input-hint">Gunakan nomor aktif dengan kode 08</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label>
+                                <i>📝</i> Catatan Tambahan
+                            </label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">✏️</span>
+                                <textarea id="requestNotes" placeholder="Contoh: Member referral, minat produk tertentu, dll..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="request-info">
+                            <div class="request-info-icon">ℹ️</div>
+                            <div class="request-info-text">
+                                <strong>Perhatian!</strong> Setelah request dikirim, Master Admin akan memproses dan menambahkan member ke daftar pegangan Anda.
+                            </div>
+                        </div>
+
+                        <button type="submit" class="submit-btn">
+                            <span>📤</span> Kirim Request ke Master Admin
+                        </button>
+                    </form>
+                </div>
+            `;
+        }
+
+        async function submitMemberRequest(event) {
+            event.preventDefault();
+            
+            const memberId = document.getElementById('newMemberId').value.trim();
+            const phone = document.getElementById('newMemberPhone').value.trim();
+            const notes = document.getElementById('requestNotes').value.trim();
+
+            // Validate phone number
+            if (!phone.match(/^08[0-9]{8,11}$/)) {
+                showNotification('Format nomor WhatsApp tidak valid! Gunakan format 08xxxxxxxxxx', 'error');
+                return;
+            }
+
+            // Validate member ID format
+            if (!memberId.match(/^MB[0-9]{3}$/)) {
+                showNotification('Format ID Member tidak valid! Gunakan format MB001, MB002, dst', 'error');
+                return;
+            }
+
+            // Check if member ID already exists
+            const { data: existingMember } = await supabase
+                .from('members')
+                .select('id')
+                .eq('member_id', memberId)
+                .maybeSingle();
+
+            if (existingMember) {
+                showNotification('ID Member sudah terdaftar! Gunakan ID lain', 'error');
+                return;
+            }
+
+            // Cari Master Admin
+            const { data: masterUsers } = await supabase
+                .from('users')
+                .select('id')
+                .eq('role', 'master');
+
+            if (!masterUsers || masterUsers.length === 0) {
+                showNotification('Tidak ada Master Admin yang tersedia', 'error');
+                return;
+            }
+
+            // Create notification
+            const notification = {
+                from_user_id: currentUser.id,
+                to_user_id: masterUsers[0].id,
+                message: `Request member baru dari ${currentUser.name}: ${memberId} - ${phone}`,
+                type: 'member_request',
+                data: {
+                    member_id: memberId,
+                    phone: phone,
+                    notes: notes,
+                    crm_id: currentUser.customer_care.id,
+                    crm_name: currentUser.name
+                },
+                read: false,
+                created_at: new Date().toISOString()
+            };
+            
+            const { error } = await supabase
+                .from('notifications')
+                .insert([notification]);
+
+            if (error) {
+                showNotification('Gagal mengirim request: ' + error.message, 'error');
+            } else {
+                showNotification('Request berhasil dikirim ke Master Admin!', 'success');
+                
+                // Reset form
+                document.getElementById('newMemberId').value = '';
+                document.getElementById('newMemberPhone').value = '';
+                document.getElementById('requestNotes').value = '';
+            }
+        }
+
+        async function showNotes() {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Memuat catatan...</p>
+                </div>
+            `;
+            
+            try {
+                const { data: followUps, error } = await supabase
+                    .from('follow_ups')
+                    .select(`
+                        *,
+                        members!member_id (member_id, phone)
+                    `)
+                    .eq('customer_care_id', currentUser.customer_care.id)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                mainContent.innerHTML = `
+                    <div class="content-header">
+                        <h2>Catatan Follow Up</h2>
+                        <p>Semua catatan follow up yang pernah Anda buat</p>
+                    </div>
+
+                    <div class="filter-section">
+                        <input type="text" id="searchNotes" placeholder="Cari catatan..." onkeyup="searchNotes()">
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Member</th>
+                                    <th>Catatan</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${followUps?.map(f => `
+                                    <tr>
+                                        <td>${formatDateTime(f.created_at)}</td>
+                                        <td><strong>${f.members?.member_id || '-'}</strong> (${f.members?.phone || '-'})</td>
+                                        <td>${f.notes || '-'}</td>
+                                        <td>
+                                            <span class="status-badge ${f.status === 'success' ? 'success' : 'warning'}">
+                                                ${f.status === 'success' ? 'Berhasil' : 'Pending'}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                                ${!followUps || followUps.length === 0 ? '<tr><td colspan="4" class="empty-state">Belum ada catatan follow up</td></tr>' : ''}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading notes:', error);
+                mainContent.innerHTML = '<div class="empty-state"><i>❌</i>Gagal memuat catatan. Periksa koneksi database.</div>';
+            }
+        }
+
+        // =============================================
+        // FUNGSI-FUNGSI UMUM
+        // =============================================
+
+        async function openFollowUpModal(memberId) {
+            const { data: member } = await supabase
+                .from('members')
+                .select('*')
+                .eq('id', memberId)
+                .single();
+
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.id = 'followUpModal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h3>Follow Up Member</h3>
+                    <p><strong>ID Member:</strong> ${member.member_id}</p>
+                    <p><strong>No. Telepon:</strong> ${member.phone}</p>
+                    
+                    <div class="form-group">
+                        <label>Catatan Follow Up</label>
+                        <textarea id="followUpNote" placeholder="Masukkan hasil follow up..." rows="4">${member.notes || ''}</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Status Follow Up</label>
+                        <select id="followUpStatus">
+                            <option value="success">Berhasil (Member merespon)</option>
+                            <option value="pending">Butuh Follow Up Lagi</option>
+                            <option value="no_response">Tidak Respon</option>
+                        </select>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button class="save-btn" onclick="submitFollowUp(${memberId})">Simpan</button>
+                        <button class="cancel-btn" onclick="closeModal('followUpModal')">Batal</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        async function submitFollowUp(memberId) {
+            const note = document.getElementById('followUpNote').value.trim();
+            const status = document.getElementById('followUpStatus').value;
+            const today = new Date().toISOString().split('T')[0];
+            
+            try {
+                // Update member
+                const { error: updateError } = await supabase
+                    .from('members')
+                    .update({ 
+                        last_follow_up: today,
+                        notes: note 
+                    })
+                    .eq('id', memberId);
+
+                if (updateError) throw updateError;
+                
+                // Add to follow ups
+                const { error: insertError } = await supabase
+                    .from('follow_ups')
+                    .insert([{
+                        member_id: memberId,
+                        customer_care_id: currentUser.customer_care.id,
+                        follow_up_date: today,
+                        status: status,
+                        notes: note,
+                        created_at: new Date().toISOString()
+                    }]);
+
+                if (insertError) throw insertError;
+                
+                showNotification('Follow up berhasil disimpan!', 'success');
+                closeModal('followUpModal');
+                
+                // Refresh current view
+                if (document.querySelector('.sidebar-menu a.active')?.textContent.includes('Follow Up Hari Ini')) {
+                    showFollowUpList();
+                } else {
+                    showCRMDashboard();
+                }
+            } catch (error) {
+                console.error('Error submitting follow up:', error);
+                showNotification('Gagal menyimpan follow up: ' + error.message, 'error');
+            }
+        }
+
+        async function markAsFollowed(memberId, checkbox) {
+            if (checkbox.checked) {
+                const today = new Date().toISOString().split('T')[0];
+                
+                try {
+                    // Update member
+                    const { error: updateError } = await supabase
+                        .from('members')
+                        .update({ last_follow_up: today })
+                        .eq('id', memberId);
+
+                    if (updateError) throw updateError;
+                    
+                    // Add to follow ups
+                    const { error: insertError } = await supabase
+                        .from('follow_ups')
+                        .insert([{
+                            member_id: memberId,
+                            customer_care_id: currentUser.customer_care.id,
+                            follow_up_date: today,
+                            status: 'success',
+                            notes: 'Follow up via checkbox',
+                            created_at: new Date().toISOString()
+                        }]);
+
+                    if (insertError) throw insertError;
+                    
+                    showNotification('Member berhasil ditandai sudah di follow up!', 'success');
+                    
+                    // Refresh the list
+                    showFollowUpList();
+                } catch (error) {
+                    console.error('Error marking as followed:', error);
+                    showNotification('Gagal: ' + error.message, 'error');
+                    checkbox.checked = false;
+                }
+            }
+        }
+
+        async function openAddMemberModal(requestData = null) {
+            const { data: customerCares } = await supabase
+                .from('customer_cares')
+                .select('*')
+                .eq('active', true);
+
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.id = 'addMemberModal';
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h3>Tambah Member Baru</h3>
+                    
+                    <div class="form-group">
+                        <label>Pilih Customer Care</label>
+                        <select id="memberCRM" required>
+                            <option value="">-- Pilih Customer Care --</option>
+                            ${customerCares?.map(crm => `
+                                <option value="${crm.id}" ${requestData && requestData.crm_id == crm.id ? 'selected' : ''}>
+                                    ${crm.name}
+                                </option>
+                            `).join('')}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>ID Member</label>
+                        <input type="text" id="memberId" value="${requestData?.member_id || ''}" 
+                               placeholder="Contoh: MB001" required>
+                        <small style="color: #718096;">Format: MB diikuti 3 angka</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>No. WhatsApp</label>
+                        <input type="text" id="memberPhone" value="${requestData?.phone || ''}" 
+                               placeholder="08123456789" required>
+                        <small style="color: #718096;">Gunakan format 08xxxxxxxxxx</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Last Deposit</label>
+                        <input type="date" id="memberLastDeposit" value="${new Date().toISOString().split('T')[0]}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Catatan</label>
+                        <textarea id="memberNotes" rows="3">${requestData?.notes || ''}</textarea>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button class="save-btn" onclick="addMember()">Simpan</button>
+                        <button class="cancel-btn" onclick="closeModal('addMemberModal')">Batal</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        async function addMember() {
+            const crmId = parseInt(document.getElementById('memberCRM').value);
+            const memberId = document.getElementById('memberId').value.trim();
+            const phone = document.getElementById('memberPhone').value.trim();
+            const lastDeposit = document.getElementById('memberLastDeposit').value;
+            const notes = document.getElementById('memberNotes').value.trim();
+
+            if (!crmId) {
+                showNotification('Pilih Customer Care terlebih dahulu!', 'error');
+                return;
+            }
+
+            if (!memberId.match(/^MB[0-9]{3}$/)) {
+                showNotification('Format ID Member tidak valid! Gunakan MB001, MB002, dst', 'error');
+                return;
+            }
+
+            if (!phone.match(/^08[0-9]{8,11}$/)) {
+                showNotification('Format nomor WhatsApp tidak valid!', 'error');
+                return;
+            }
+
+            // Cek duplikasi ID
+            const { data: existing } = await supabase
+                .from('members')
+                .select('id')
+                .eq('member_id', memberId)
+                .maybeSingle();
+
+            if (existing) {
+                showNotification('ID Member sudah terdaftar!', 'error');
+                return;
+            }
+
+            const newMember = {
+                member_id: memberId,
+                phone: phone,
+                last_deposit: lastDeposit || null,
+                customer_care_id: crmId,
+                notes: notes,
+                status: 'active',
+                created_at: new Date().toISOString()
+            };
+
+            const { error } = await supabase
+                .from('members')
+                .insert([newMember]);
+
+            if (error) {
+                showNotification('Gagal menambah member: ' + error.message, 'error');
+            } else {
+                showNotification('Member berhasil ditambahkan!', 'success');
+                closeModal('addMemberModal');
+                showMembers();
+            }
+        }
+
+        async function openEditMemberModal(memberId) {
+            const { data: member } = await supabase
+                .from('members')
+                .select('*')
+                .eq('id', memberId)
+                .single();
+
+            const { data: customerCares } = await supabase
+                .from('customer_cares')
+                .select('*')
+                .eq('active', true);
+
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.id = 'editMemberModal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h3>Edit Member</h3>
+                    
+                    <div class="form-group">
+                        <label>Pilih Customer Care</label>
+                        <select id="editMemberCRM" required>
+                            <option value="">-- Pilih Customer Care --</option>
+                            ${customerCares?.map(crm => `
+                                <option value="${crm.id}" ${member.customer_care_id === crm.id ? 'selected' : ''}>
+                                    ${crm.name}
+                                </option>
+                            `).join('')}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>ID Member</label>
+                        <input type="text" id="editMemberId" value="${member.member_id}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>No. WhatsApp</label>
+                        <input type="text" id="editMemberPhone" value="${member.phone}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Last Deposit</label>
+                        <input type="date" id="editMemberLastDeposit" value="${member.last_deposit || ''}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Catatan</label>
+                        <textarea id="editMemberNotes" rows="3">${member.notes || ''}</textarea>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button class="save-btn" onclick="updateMember(${memberId})">Update</button>
+                        <button class="cancel-btn" onclick="closeModal('editMemberModal')">Batal</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        async function updateMember(memberId) {
+            const crmId = parseInt(document.getElementById('editMemberCRM').value);
+            const memberIdVal = document.getElementById('editMemberId').value.trim();
+            const phone = document.getElementById('editMemberPhone').value.trim();
+            const lastDeposit = document.getElementById('editMemberLastDeposit').value;
+            const notes = document.getElementById('editMemberNotes').value.trim();
+
+            if (!crmId) {
+                showNotification('Pilih Customer Care terlebih dahulu!', 'error');
+                return;
+            }
+
+            // Cek duplikasi ID (kecuali untuk member ini sendiri)
+            const { data: existing } = await supabase
+                .from('members')
+                .select('id')
+                .eq('member_id', memberIdVal)
+                .neq('id', memberId)
+                .maybeSingle();
+
+            if (existing) {
+                showNotification('ID Member sudah digunakan member lain!', 'error');
+                return;
+            }
+
+            const updates = {
+                customer_care_id: crmId,
+                member_id: memberIdVal,
+                phone: phone,
+                last_deposit: lastDeposit || null,
+                notes: notes,
+                updated_at: new Date().toISOString()
+            };
+
+            const { error } = await supabase
+                .from('members')
+                .update(updates)
+                .eq('id', memberId);
+
+            if (error) {
+                showNotification('Gagal update member: ' + error.message, 'error');
+            } else {
+                showNotification('Member berhasil diupdate!', 'success');
+                closeModal('editMemberModal');
+                showMembers();
+            }
+        }
+
+        async function deleteMember(memberId) {
+            if (confirm('Yakin ingin menghapus member ini?')) {
+                const { error } = await supabase
+                    .from('members')
+                    .delete()
+                    .eq('id', memberId);
+
+                if (error) {
+                    showNotification('Gagal menghapus member: ' + error.message, 'error');
+                } else {
+                    showNotification('Member berhasil dihapus!', 'success');
+                    showMembers();
+                }
+            }
+        }
+
+        function openAddCRMModal() {
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.id = 'addCRMModal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h3>Tambah Customer Care Baru</h3>
+                    
+                    <div class="form-group">
+                        <label>Nama Lengkap</label>
+                        <input type="text" id="crmName" required placeholder="Contoh: Andi Setiawan">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="crmUsername" required placeholder="Contoh: andi_crm">
+                        <small style="color: #718096;">Digunakan untuk login</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="crmPassword" required placeholder="Minimal 6 karakter">
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button class="save-btn" onclick="addCustomerCare()">Simpan</button>
+                        <button class="cancel-btn" onclick="closeModal('addCRMModal')">Batal</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        async function addCustomerCare() {
+            const name = document.getElementById('crmName').value.trim();
+            const username = document.getElementById('crmUsername').value.trim();
+            const password = document.getElementById('crmPassword').value.trim();
+
+            if (!name || !username || !password) {
+                showNotification('Semua field harus diisi!', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showNotification('Password minimal 6 karakter!', 'error');
+                return;
+            }
+
+            // Cek duplikasi username
+            const { data: existingUser } = await supabase
+                .from('users')
+                .select('id')
+                .eq('username', username)
+                .maybeSingle();
+
+            if (existingUser) {
+                showNotification('Username sudah digunakan!', 'error');
+                return;
+            }
+
+            try {
+                // Create user
+                const { data: user, error: userError } = await supabase
+                    .from('users')
+                    .insert([{
+                        username: username,
+                        password: password,
+                        role: 'crm',
+                        name: name,
+                        created_at: new Date().toISOString()
+                    }])
+                    .select();
+
+                if (userError) throw userError;
+
+                // Create customer care
+                const { error: crmError } = await supabase
+                    .from('customer_cares')
+                    .insert([{
+                        user_id: user[0].id,
+                        name: name,
+                        active: true,
+                        created_at: new Date().toISOString()
+                    }]);
+
+                if (crmError) throw crmError;
+
+                showNotification('Customer Care berhasil ditambahkan!', 'success');
+                closeModal('addCRMModal');
+                showCustomerCares();
+            } catch (error) {
+                console.error('Error adding customer care:', error);
+                showNotification('Gagal menambah: ' + error.message, 'error');
+            }
+        }
+
+        async function toggleCRMStatus(crmId, active) {
+            const { error } = await supabase
+                .from('customer_cares')
+                .update({ active: active })
+                .eq('id', crmId);
+
+            if (error) {
+                showNotification('Gagal mengubah status: ' + error.message, 'error');
+            } else {
+                showNotification(`Status berhasil diubah!`, 'success');
+                showCustomerCares();
+            }
+        }
+
+        async function processMemberRequest(notifId) {
+            const { data: notif } = await supabase
+                .from('notifications')
+                .select('*')
+                .eq('id', notifId)
+                .single();
+            
+            if (notif) {
+                closeModal('notificationModal');
+                openAddMemberModal(notif.data);
+                markNotificationRead(notifId);
+            }
+        }
+
+        async function markNotificationRead(notifId) {
+            const { error } = await supabase
+                .from('notifications')
+                .update({ read: true })
+                .eq('id', notifId);
+
+            if (!error) {
+                showNotifications();
+                loadNotificationCount();
+            }
+        }
+
+        // Search functions
+        function searchMembers() {
+            const searchText = document.getElementById('searchInput')?.value.toLowerCase() || '';
+            const tables = document.querySelectorAll('#membersContainer table');
+            
+            tables.forEach(table => {
+                const rows = table.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchText) ? '' : 'none';
+                });
+            });
+        }
+
+        function filterByCRM() {
+            searchMembers();
+        }
+
+        function searchFollowUpMembers() {
+            const searchText = document.getElementById('searchFollowUp')?.value.toLowerCase() || '';
+            const table = document.querySelector('#mainContent table');
+            if (table) {
+                const rows = table.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchText) ? '' : 'none';
+                });
+            }
+        }
+
+        function searchNotes() {
+            const searchText = document.getElementById('searchNotes')?.value.toLowerCase() || '';
+            const table = document.querySelector('#mainContent table');
+            if (table) {
+                const rows = table.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchText) ? '' : 'none';
+                });
+            }
+        }
+
+        // Helper functions
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+        }
+
+        function formatDateTime(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleString('id-ID', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            const messageSpan = document.getElementById('notificationMessage');
+            
+            messageSpan.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        async function logout() {
+            currentUser = null;
+            document.getElementById('loginPage').style.display = 'block';
+            document.getElementById('appContainer').classList.remove('active');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            switchRole('master');
+            checkSupabaseConnection();
+        });
+    </script>
+</body>
+</html>
